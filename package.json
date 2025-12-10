@@ -1,0 +1,32 @@
+{
+  "name": "disaster-preparedness-vr-museum",
+  "version": "1.0.0",
+  "description": "Virtual Museum for Disaster Preparedness Education",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "express-fileupload": "^1.4.0",
+    "aframe": "^1.4.2",
+    "aframe-extras": "^7.0.0",
+    "socket.io": "^4.7.0",
+    "three": "^0.158.0",
+    "howler": "^2.2.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "vr",
+    "museum",
+    "disaster-preparedness",
+    "education",
+    "interactive-learning"
+  ],
+  "author": "ITE Project Team",
+  "license": "MIT"
+}
