@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Disaster Preparedness VR Museum</title>
+    
+    <!-- A-Frame (ONLY ONCE) -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="src/styles.css">
+</head>
+
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h2>Loading Disaster Preparedness Museum</h2>
+            <p>Preparing your immersive learning experience...</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Menu -->
+    <div id="main-menu" class="screen">
+        <div class="menu-container">
+            <div class="museum-header">
+                <h1><i class="fas fa-shield-alt"></i> Disaster Preparedness VR Museum</h1>
+                <p class="tagline">Learn. Prepare. Survive.</p>
+            </div>
+            
+            <div class="menu-grid">
+                <!-- VR Tours Section -->
+                <div class="menu-card vr-tours">
+                    <div class="card-icon">
+                        <i class="fas fa-vr-cardboard"></i>
+                    </div>
+                    <h3>VR Museum Tours</h3>
+                    <p>Explore interactive disaster zones in virtual reality</p>
+                    <button class="btn-primary" id="start-vr-tour-btn">
+                        <i class="fas fa-play"></i> Start VR Tour
+                    </button>
+                    <div class="tour-options">
+                        <button class="btn-tour" onclick="loadTour('earthquake')">
+                            <i class="fas fa-mountain"></i> Earthquake Zone
+                        </button>
+                        <button class="btn-tour" onclick="loadTour('fire')">
+                            <i class="fas fa-fire"></i> Fire Safety Zone
+                        </button>
+                        <button class="btn-tour" onclick="loadTour('flood')">
+                            <i class="fas fa-water"></i> Flood Preparedness
+                        </button>
+                        <button class="btn-tour" onclick="loadTour('typhoon')">
+                            <i class="fas fa-wind"></i> Typhoon Safety
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mini-Games Section -->
+                <div class="menu-card mini-games">
+                    <div class="card-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h3>Interactive Challenges</h3>
+                    <p>Test your knowledge through fun mini-games</p>
+                    <div class="game-grid">
+                        <button class="game-btn" onclick="startGame('earthquake-hunt')">
+                            <i class="fas fa-search"></i>
+                            <span>Earthquake Hunt</span>
+                        </button>
+                        <button class="game-btn" onclick="startGame('fire-safety')">
+                            <i class="fas fa-fire-extinguisher"></i>
+                            <span>Fire Safety Challenge</span>
+                        </button>
+                        <button class="game-btn" onclick="startGame('disaster-quiz')">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Disaster Quiz</span>
+                        </button>
+                        <button class="game-btn" onclick="startGame('evacuation-sim')">
+                            <i class="fas fa-running"></i>
+                            <span>Evacuation Simulator</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Learning Zone -->
+                <div class="menu-card learning-zone">
+                    <div class="card-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Learning Zone</h3>
+                    <p>Access educational resources and 3D artifacts</p>
+                    <div class="learning-options">
+                        <button class="btn-learning" onclick="openLearning('posters')">
+                            <i class="fas fa-images"></i> Safety Posters
+                        </button>
+                        <button class="btn-learning" onclick="openLearning('videos')">
+                            <i class="fas fa-video"></i> Documentaries
+                        </button>
+                        <button class="btn-learning" onclick="openLearning('3d-viewer')">
+                            <i class="fas fa-cube"></i> 3D Artifact Viewer
+                        </button>
+                        <button class="btn-learning" onclick="openLearning('ar-mode')">
+                            <i class="fas fa-mobile-alt"></i> AR Mode
+                        </button>
+                    </div>
+                </div>
+
+                <!-- User Progress -->
+                <div class="menu-card user-progress">
+                    <div class="card-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>My Progress</h3>
+                    <div id="progress-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Tours Completed</span>
+                            <span class="stat-value" id="tours-completed">0/4</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Total Score</span>
+                            <span class="stat-value" id="total-score">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Badges Earned</span>
+                            <div class="badges-container" id="badges-container">
+                                <span class="no-badges">No badges yet</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-secondary" onclick="viewLeaderboard()">
+                        <i class="fas fa-trophy"></i> View Leaderboard
+                    </button>
+                </div>
+            </div>
+
+            <div class="menu-footer">
+                <div class="user-info">
+                    <div class="avatar">
+                        <i class="fas fa-user-astronaut"></i>
+                    </div>
+                    <div>
+                        <p id="username">Guest User</p>
+                        <button class="btn-small" onclick="changeUsername()">
+                            <i class="fas fa-edit"></i> Change Name
+                        </button>
+                    </div>
+                </div>
+                <div class="menu-controls">
+                    <button class="btn-control" onclick="toggleAudio()" id="audio-btn">
+                        <i class="fas fa-volume-up"></i> Sound On
+                    </button>
+                    <button class="btn-control" onclick="toggleInstructions()">
+                        <i class="fas fa-question-circle"></i> Help
+                    </button>
+                    <button class="btn-control" onclick="toggleVRMode()" id="vr-mode-btn">
+                        <i class="fas fa-vr-cardboard"></i> VR Mode Off
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VR Tour Container -->
+    <div id="vr-container" class="screen hidden">
+        <!-- Add A-Frame Extras for movement -->
+        <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+        
+        <a-scene
+            vr-mode-ui="enabled: true"
+            loading-screen="enabled: false">
+
+            
+            <!-- Assets -->
+            <a-assets>
+                <!-- Museum Images --> 
+                <img id="groundColor" src="assets/models/textures/ground_color.jpg">
+                <img id="groundNormal" src="assets/models/textures/ground_normal.jpg">
+                <img id="groundRoughness" src="assets/models/textures/ground_roughness.jpg">
+                <img id="sky" src="assets/models/sky.jpg">
+                <video id="museumVideo" src="assets/videos/vid-main.mp4" autoplay loop muted playsinline></video>
+                <img id="typhoon-img" src="assets/posters/typhoon.png">
+                <img id="earthquake-img" src="assets/posters/earthquake.png">
+                <img id="flood-img" src="assets/posters/flooding.png">
+                <img id="fire-img" src="assets/posters/fire.png">
+            </a-assets>
+            <!-- Camera with movement -->
+            <a-entity id="camera-rig" movement-controls="speed: 0.1" wasd-controls="fly: false">
+                <a-entity camera="active: true; far: 1000" 
+                         position="0 1.6 0" 
+                         look-controls="pointerLockEnabled: true">
+                    <a-entity
+                        id="mouse-cursor"
+                        cursor="rayOrigin: mouse"
+                        raycaster="objects: .interactive; far: 30"
+                        position="0 0 -1"
+                        geometry="primitive: ring; radiusInner: 0.015; radiusOuter: 0.025"
+                        material="color: #00eaff; shader: flat; opacity: 0.95"
+
+                        animation__pulse="property: scale;
+                                        dir: alternate;
+                                        dur: 800;
+                                        loop: true;
+                                        to: 1.2 1.2 1.2">
+                    </a-entity>
+                </a-entity>
+            </a-entity>
+
+            <!-- Optimized Ground Floor -->
+            <a-plane
+                id="ground"
+                position="0 0 0"
+                rotation="-90 0 0"
+                width="300"
+                height="300"
+                material="
+                    src: #groundColor;
+                    normalMap: #groundNormal;
+                    roughnessMap: #groundRoughness;
+                    repeat: 30 30;
+                    metalness: 0.05;
+                    roughness: 1;
+                ">
+            </a-plane>
+
+            <!-- Sky -->
+            <a-sky src="#sky"></a-sky>
+
+            <!-- Direct Zone Access Portals -->
+            <a-entity id="zone-portals">
+                <!-- Earthquake Portal -->
+                <a-ring position="25 0.10382 -5" radius-inner="3" radius-outer="3.5" color="#FF6B6B" rotation="-90 0 0" class="interactive portal" data-zone="earthquake" event-set__enter="_event: mouseenter; material.opacity: 0.6" event-set__leave="_event: mouseleave; material.opacity: 1" portal-teleport="x: 25; y: 1.6; z: -8">
+                    <a-text value="EARTHQUAKE ZONE" position="0 0.1 0" color="#FFF" align="center" width="6" text=""></a-text>
+                    <a-text value="Enter Portal" position="0 -0.1 0" color="#FFD700" align="center" scale="0.8 0.8 0.8" text=""></a-text>
+                </a-ring>
+                
+                <!-- Fire Portal -->
+                <a-ring position="-25 0.06678 -5" radius-inner="3" radius-outer="3.5" color="#FFA500" rotation="-90 0 0" class="interactive portal" data-zone="fire" event-set__enter="_event: mouseenter; material.opacity: 0.6" event-set__leave="_event: mouseleave; material.opacity: 1" portal-teleport="x: -25; y: 1.6; z: -8">
+                    <a-text value="FIRE SAFETY ZONE" position="0 0.1 0" color="#FFF" align="center" width="6" text=""></a-text>
+                    <a-text value="Enter Portal" position="0 -0.1 0" color="#FFD700" align="center" scale="0.8 0.8 0.8" text=""></a-text>
+                </a-ring>
+                
+                <!-- Flood Portal -->
+                <a-ring position="-9.01306 0.18356 20" radius-inner="3" radius-outer="3.5" color="#4ECDC4" rotation="-90 0 0" class="interactive portal" data-zone="flood" event-set__enter="_event: mouseenter; material.opacity: 0.6" event-set__leave="_event: mouseleave; material.opacity: 1" portal-teleport="x: -9; y: 1.6; z: 16">
+                    <a-text value="FLOOD ZONE" position="0 0.1 0" color="#FFF" align="center" width="6" text=""></a-text>
+                    <a-text value="Enter Portal" position="0 -0.1 0" color="#FFD700" align="center" scale="0.8 0.8 0.8" text=""></a-text>
+                </a-ring>
+                
+                <!-- Typhoon Portal -->
+                  <a-ring position="10.44798 0.184 20" radius-inner="3" radius-outer="3.5" color="#45B7D1" rotation="-90 0 0" class="interactive portal" data-zone="typhoon" event-set__enter="_event: mouseenter; material.opacity: 0.6" event-set__leave="_event: mouseleave; material.opacity: 1" portal-teleport="x: 10; y: 1.6; z: 16">
+                    <a-text value="Survive Typhoons" position="0 0.15203 0" color="#FFF" align="center" width="5" text=""></a-text>
+                    <a-text value="Enter Portal" position="0 -0.1 0" color="#FFD700" align="center" scale="0.8 0.8 0.8" text=""></a-text>
+                </a-ring>
+            </a-entity>
+            
+            <!-- Museum Building with Image -->
+             <a-entity id="museum-building" position="0 -0.01217 -15">
+                <a-box position="0 3 0" width="20" height="6" depth="15" material="side: double; src:  #museumVideo">
+                    <a-text value="DISASTER PREPAREDNESS MUSEUM" align="center" color="#FFF" position="0 4 7.6" width="18" background="color: #8B4513" text="">
+                    </a-text>
+                </a-box>
+
+                <a-text value="Welcome Center" position="0 6.38508 7.53052" color="#FFD700" align="center" scale="2 2 2" text=""></a-text>
+            </a-entity>
+
+            <!-- Zone Information Displays -->
+            <a-entity id="zone-displays">
+                <!-- Earthquake Display -->
+                <a-entity position="25 3 -5" class="zone-display" data-zone="earthquake" look-at="#camera" animation="property: position; dir: alternate; dur: 2000; loop: true; to: 25 3.3 -5">
+                    <a-plane position="0 0.315 0" width="5" height="3" material="src: #earthquake-img; opacity: 0.9; side: double"></a-plane>
+                    <a-text value="Learn Earthquake Safety" position="0 1.98641 -0.048" color="#FFF" align="center" width="6" side="double"></a-text>
+                </a-entity>
+                
+                <!-- Fire Display -->
+                <a-entity position="-25 3 -5" class="zone-display" data-zone="fire" look-at="#camera" animation="property: position; dir: alternate; dur: 2000; loop: true; to: -25 3.3 -5">
+                    <a-plane position="0 0.315 0" width="5" height="3" material="src: #fire-img; opacity: 0.9; side: double"></a-plane>
+                    <a-text value="Master Fire Prevention" position="0 2.059 -0.048" color="#FFF" align="center" width="6" side="double"></a-text>
+                </a-entity>
+                
+                <!-- Flood Display -->
+                <a-entity position="0 3 20" class="zone-display" data-zone="flood" look-at="#camera" animation="property: position; dir: alternate; dur: 2000; loop: true; to: 0 3.3 20">
+                    <a-plane position="-9.15417 0.31547 0" width="5" height="3" material="src: #flood-img; opacity: 0.9; side: double"></a-plane>
+                    <a-text value="Prepare for Flooding" position="-9.19151 2.00919 -0.048" color="#FFF" align="center" width="6" side="double"></a-text>
+                </a-entity>
+
+                <!-- Typhoon Display -->
+                <a-entity position="8.84532 3 20.09131" class="zone-display" data-zone="typhoon" look-at="#camera" animation="property: position; dir: alternate; dur: 2000; loop: true; to: 8.84532 3.3 20.09131">
+                    <a-plane position="1.57932 0.315 0" width="5" height="3" material="src: #typhoon-img; opacity: 0.9; side: double"></a-plane>
+                    <a-text value="Survive Typhoon" position="1.7258 2.05852 -0.0483" color="#FFF" align="center" width="6" side="double"></a-text>
+                </a-entity>
+            </a-entity>
+            
+            <!-- Information Points -->
+            <a-entity id="info-points">
+                <a-entity class="info-point interactive" position="-6.36277 1.6 -5.05775" data-action="show-info" data-info="welcome">
+                    <a-sphere radius="0.5" color="#00FF88" material="shader: flat" geometry=""></a-sphere>
+                    <a-text value="ℹ️ Welcome" position="0 0.72342 0" color="#FFF" align="center" scale="2 2 2" text="color: #963131"></a-text>
+                </a-entity>
+                
+                 <a-entity class="info-point interactive" position="6.36 1.6 -5.07253" data-action="show-info" data-info="controls">
+                    <a-sphere radius="0.5" color="#00CCFF" material="shader: flat" geometry=""></a-sphere>
+                    <a-text value="🎮 Controls" position="0 0.77649 0" color="#FFF" align="center" scale="2 2 2" text="color: #963131"></a-text>
+                </a-entity>
+            </a-entity>
+            
+           <!-- Trees / Environment -->
+            <a-entity id="environment">
+
+                <!-- Tree 1 -->
+                <a-entity position="-30 0 -30">
+                    <a-cylinder height="2" radius="0.4" color="#8B5A2B" position="0 1 0"></a-cylinder>
+                    <a-cone height="4" radius-bottom="2.5" radius-top="0" color="#2E8B57" position="0 4 0" animation="property: rotation; to: 0 0 3; dir: alternate; dur: 3000; loop: true; easing: easeInOutSine"></a-cone>
+                </a-entity>
+
+                <!-- Tree 2 -->
+                <a-entity position="30 0 -30">
+                    <a-cylinder height="2" radius="0.4" color="#8B5A2B" position="0 1 0"></a-cylinder>
+                    <a-cone height="4" radius-bottom="2.5" radius-top="0" color="#3CB371" position="0 4 0" animation="property: rotation; to: 0 0 4; dir: alternate; dur: 3000; loop: true; easing: easeInOutSine"></a-cone>
+                </a-entity>
+
+                <!-- Tree 3 -->
+                <a-entity position="-30 0 30">
+                    <a-cylinder height="2" radius="0.4" color="#8B5A2B" position="0 1 0"></a-cylinder>
+                    <a-cone height="4" radius-bottom="2.5" radius-top="0" color="#228B22" position="0 4 0" animation="property: rotation; to: 0 0 3; dir: alternate; dur: 3000; loop: true; easing: easeInOutSine"></a-cone>
+                </a-entity>
+
+                <!-- Tree 4 -->
+                <a-entity position="30 0 30">
+                    <a-cylinder height="2" radius="0.4" color="#8B5A2B" position="0 1 0"></a-cylinder>
+                    <a-cone height="4" radius-bottom="2.5" radius-top="0" color="#006400" position="0 4 0" animation="property: rotation; to: 0 0 3; dir: alternate; dur: 3000; loop: true; easing: easeInOutSine"></a-cone>
+                </a-entity>
+            </a-entity>
+
+            
+            <!-- Lighting -->
+            <a-entity light="type: ambient; color: #888; intensity: 0.6"></a-entity>
+            <a-entity light="type: directional; color: #FFF; intensity: 0.8" position="5 10 5"></a-entity>
+            <a-entity light="type: point; color: #FFF; intensity: 0.5" position="0 5 0"></a-entity>
+            
+            <!-- Play/Pause -->
+             <a-entity id="video-controls" position="0 0.58562 -7">
+                <a-plane id="videoToggleBtn" 
+                        width="2" height="0.7" 
+                        color="#222" opacity="0.8" 
+                        class="interactive" 
+                        onclick="toggleMuseumVideo()">
+                </a-plane>
+
+                <a-text id="videoToggleText" 
+                        value="Pause Video" 
+                        color="#FFF" align="center" 
+                        position="0 0 0.01" 
+                        width="4">
+                </a-text>
+            </a-entity>
+        </a-scene>
+        
+        <!-- VR Controls Overlay -->
+        <div class="vr-controls-overlay">
+            <button class="btn-exit" id="exit-vr-tour-btn">
+                <i class="fas fa-times"></i> Exit VR Tour
+            </button>
+            <div class="vr-info">
+                <h3 id="current-zone">Museum Plaza</h3>
+                <p id="zone-description">Click "F" for fullscreen</p>
+                <div class="vr-instructions">
+                    <p><i class="fas fa-mouse-pointer"></i>Click on any portal to enter that disaster zone directly!</p>
+                    <p><i class="fas fa-arrows-alt"></i> WASD to move | Mouse to look</p>
+                </div>
+            </div>
+            <button class="btn-audio" id="toggle-audio-btn">
+                <i class="fas fa-volume-up"></i> Toggle Audio
+            </button>
+        </div>
+    </div>
+
+    <!-- Learning Zone Container -->
+    <div id="learning-container" class="screen hidden">
+        <div class="learning-header">
+            <button class="btn-back" onclick="closeLearning()">
+                <i class="fas fa-arrow-left"></i> Back to Menu
+            </button>
+            <h2 id="learning-title">Learning Zone</h2>
+        </div>
+        
+        <div class="learning-content" id="learning-content">
+            <!-- Content loaded dynamically -->
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div id="game-container" class="screen hidden">
+        <div class="game-header">
+            <button class="btn-back" onclick="exitGame()">
+                <i class="fas fa-arrow-left"></i> Exit Game
+            </button>
+            <div class="game-info">
+                <h3 id="game-title">Game</h3>
+                <div class="game-stats">
+                    <p>Disaster Preparedness Museum</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-area" id="game-area">
+            <!-- Game content loaded dynamically -->
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="info-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="info-modal-title">Information</h2>
+                <button class="modal-close" onclick="closeInfoModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="info-modal-body">
+                <!-- Content will be filled dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="leaderboard-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-trophy"></i> Leaderboard</h2>
+                <button class="modal-close" onclick="closeLeaderboard()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <table id="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th>Score</th>
+                            <th>Tours</th>
+                            <th>Badges</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Filled by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructions Modal -->
+    <div id="instructions-modal" class="modal hidden">
+        <div class="modal-content wide">
+            <div class="modal-header">
+                <h2><i class="fas fa-info-circle"></i> How to Use the Museum</h2>
+                <button class="modal-close" onclick="closeInstructions()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="instructions-grid">
+                    <div class="instruction-card">
+                        <i class="fas fa-vr-cardboard fa-3x"></i>
+                        <h3>VR Navigation</h3>
+                        <ul>
+                            <li>Press 'F' to enter fullscreen</li>
+                            <li>Use WASD keys to move around</li>
+                            <li>Click and drag to look around</li>
+                        </ul>
+                    </div>
+                    <div class="instruction-card">
+                        <i class="fas fa-gamepad fa-3x"></i>
+                        <h3>Games & Challenges</h3>
+                        <ul>
+                            <li>Complete challenges to earn points</li>
+                            <li>Answer quiz questions correctly</li>
+                            <li>Find hidden items in scavenger hunts</li>
+                            <li>Beat the clock in timed challenges</li>
+                        </ul>
+                    </div>
+                    <div class="instruction-card">
+                        <i class="fas fa-graduation-cap fa-3x"></i>
+                        <h3>Learning Resources</h3>
+                        <ul>
+                            <li>View safety posters in high resolution</li>
+                            <li>Watch educational documentaries</li>
+                            <li>Interact with 3D safety equipment</li>
+                            <li>Use AR mode on mobile devices</li>
+                        </ul>
+                    </div>
+                    <div class="instruction-card">
+                        <i class="fas fa-chart-line fa-3x"></i>
+                        <h3>Progress Tracking</h3>
+                        <ul>
+                            <li>Track completed tours</li>
+                            <li>Earn badges for achievements</li>
+                            <li>Compare scores on leaderboard</li>
+                            <li>Save your progress automatically</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Player -->
+    <audio id="background-audio" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Tour Audio -->
+    <audio id="tour-audio" preload="auto">
+        <source src="https://assets.mixkit.co/music/preview/mixkit-driving-ambition-32.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Import JavaScript files -->
+    <script src="src/main.js"></script>
+    <script src="src/games.js"></script>
+    
+    <!-- Initialize Application -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    const startVRBtn = document.getElementById('start-vr-tour-btn');
+    if (startVRBtn) startVRBtn.onclick = startVRTour;
+
+    const exitVRBtn = document.getElementById('exit-vr-tour-btn');
+    if (exitVRBtn) exitVRBtn.onclick = exitVRTour;
+
+    const toggleAudioBtn = document.getElementById('toggle-audio-btn');
+    if (toggleAudioBtn) toggleAudioBtn.onclick = toggleTourAudio;
+
+    // Loading screen simulation
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += 10;
+        const progressFill = document.getElementById('progress-fill');
+        if (progressFill) progressFill.style.width = progress + '%';
+
+        if (progress >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loading-screen');
+                if (loadingScreen) loadingScreen.style.display = 'none';
+
+                if (typeof initializeApp === 'function') initializeApp();
+            }, 500);
+        }
+    }, 200);
+});
+
+// ⭐ REQUIRED: Start VR Tour + Start Video
+window.startVRTour = function () {
+    if (typeof museumApp !== 'undefined' && museumApp) {
+        museumApp.startVRTour();
+    } else {
+        const mainMenu = document.getElementById('main-menu');
+        const vrContainer = document.getElementById('vr-container');
+        if (mainMenu && vrContainer) {
+            mainMenu.classList.add('hidden');
+            vrContainer.classList.remove('hidden');
+        }
+    }
+
+    const video = document.getElementById('museumVideo');
+    if (video) {
+        video.muted = true;
+        video.play().catch(err => console.warn("Autoplay blocked:", err));
+    }
+
+    const btnText3D = document.getElementById('videoToggleText');
+    if (btnText3D) btnText3D.setAttribute('value', 'Pause Video');
+};
+
+// ⭐ REQUIRED: Play/Pause function
+window.toggleMuseumVideo = function () {
+    const video = document.getElementById('museumVideo');
+    const btnText3D = document.getElementById('videoToggleText');
+
+    if (!video) {
+        console.error("museumVideo not found");
+        return;
+    }
+
+    if (video.paused) {
+        video.play();
+        if (btnText3D) btnText3D.setAttribute('value', 'Pause Video');
+    } else {
+        video.pause();
+        if (btnText3D) btnText3D.setAttribute('value', 'Play Video');
+    }
+};
+
+    AFRAME.registerComponent('portal-teleport', {
+    schema: {
+        x: { type: 'number' },
+        y: { type: 'number', default: 1.6 },
+        z: { type: 'number' }
+    },
+    init() {
+        this.el.addEventListener('click', () => {
+        const camRig = document.querySelector('#camera-rig');
+        if (camRig) {
+            camRig.setAttribute('position', {
+            x: this.data.x,
+            y: this.data.y,
+            z: this.data.z
+            });
+        }
+        });
+    }
+    });
+</script>
+
+</body>
+</html>
